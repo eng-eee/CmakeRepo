@@ -1,3 +1,0 @@
-/home/mert/Projects/CMakeCourse/Lecture1/build/CMakeFiles/Executable.dir
-/home/mert/Projects/CMakeCourse/Lecture1/build/CMakeFiles/edit_cache.dir
-/home/mert/Projects/CMakeCourse/Lecture1/build/CMakeFiles/rebuild_cache.dir
