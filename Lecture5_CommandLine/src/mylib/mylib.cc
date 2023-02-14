@@ -5,5 +5,5 @@
 
 void PrintHello()
 {
-    std::cout<<"Hello world..\n";
+    std::cout<<"Hello CMAKE ..\n";
 }
