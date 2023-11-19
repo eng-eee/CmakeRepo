@@ -1,0 +1,71 @@
+{
+"Applications" : 
+ [
+    {
+        "Remote_Tester": {
+            "UseCase" : 0,
+            "Channels" : [
+                "CAN1",
+                "CAN2"
+            ]
+        },
+        "Ivd_Manager": {
+            "UseCase" : 1,
+            "Channels" : [
+                "CAN1",
+                "CAN2",
+                "CAN3"
+            ]
+        },
+        "Charging_App": {
+            "UseCase" : 3,
+            "Channels" : [
+                "CAN1"
+            ]
+        },
+        "VucManager": {
+            "UseCase" : 0,
+            "Channels" : [
+                "CAN1",
+                "CAN2"
+            ]
+        },
+        "AuthenticationHandler": {
+            "UseCase" : 1,
+            "Channels" : [
+                "CAN1",
+                "CAN2",
+                "CAN3"
+            ]
+        },
+        "SecGWApplication": {
+            "UseCase" : 3,
+            "Channels" : [
+                "CAN1"
+            ]
+        },
+        "TesterArb": {
+            "UseCase" : 0,
+            "Channels" : [
+                "CAN1",
+                "CAN2"
+            ]
+        },
+        "DiagClient": {
+            "UseCase" : 1,
+            "Channels" : [
+                "CAN1",
+                "CAN2",
+                "CAN3"
+            ]
+        },
+        "ChippApp": {
+            "UseCase" : 3,
+            "Channels" : [
+                "CAN1"
+            ]
+        }
+
+    }
+ ]
+}

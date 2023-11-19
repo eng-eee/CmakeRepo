@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<applications>
+    <application>
+            <id>1</id>
+            <platform>linux-x64</platform><platform>macOs</platform>
+            <version>2.4</version>
+    </application>
+    <application>
+            <id>2</id>
+            <platform>windows</platform>
+            <version>2.5</version>
+    </application>
+    <application>
+            <id>3</id>
+            <platform>linux</platform>
+            <version>2.6</version>
+    </application>
+</applications>
