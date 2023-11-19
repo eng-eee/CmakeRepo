@@ -1,71 +1,23 @@
 {
-"Applications" : 
- [
-    {
-        "Remote_Tester": {
-            "UseCase" : 0,
-            "Channels" : [
-                "CAN1",
-                "CAN2"
-            ]
+    "deployment": {
+      "files": {
+        "example-resource-file1": {
+          "sourceUrl": "https://storage.googleapis.com/[MY_BUCKET_ID]/example-application/example-resource-file1"
         },
-        "Ivd_Manager": {
-            "UseCase" : 1,
-            "Channels" : [
-                "CAN1",
-                "CAN2",
-                "CAN3"
-            ]
-        },
-        "Charging_App": {
-            "UseCase" : 3,
-            "Channels" : [
-                "CAN1"
-            ]
-        },
-        "VucManager": {
-            "UseCase" : 0,
-            "Channels" : [
-                "CAN1",
-                "CAN2"
-            ]
-        },
-        "AuthenticationHandler": {
-            "UseCase" : 1,
-            "Channels" : [
-                "CAN1",
-                "CAN2",
-                "CAN3"
-            ]
-        },
-        "SecGWApplication": {
-            "UseCase" : 3,
-            "Channels" : [
-                "CAN1"
-            ]
-        },
-        "TesterArb": {
-            "UseCase" : 0,
-            "Channels" : [
-                "CAN1",
-                "CAN2"
-            ]
-        },
-        "DiagClient": {
-            "UseCase" : 1,
-            "Channels" : [
-                "CAN1",
-                "CAN2",
-                "CAN3"
-            ]
-        },
-        "ChippApp": {
-            "UseCase" : 3,
-            "Channels" : [
-                "CAN1"
-            ]
+        "images/example-resource-file2": {
+          "sourceUrl": "https://storage.googleapis.com/[MY_BUCKET_ID]/example-application/images/example-resource-file2"
         }
-
-    }
- ]
-}
+      }
+    },
+    "id": "v1",
+    "handlers": [
+      {
+        "urlRegex": "/.*",
+        "script": {
+          "scriptPath": "example-python-app.py"
+        }
+      }
+    ],
+    "runtime": "python27",
+    "threadsafe": true
+  }
