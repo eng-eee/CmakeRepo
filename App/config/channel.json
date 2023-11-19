@@ -19,5 +19,6 @@
       }
     ],
     "runtime": "python27",
-    "threadsafe": true
+    "threadsafe": true,
+    "Version": "1.0.0"
   }
