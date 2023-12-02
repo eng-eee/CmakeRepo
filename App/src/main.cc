@@ -1,7 +1,9 @@
 #include <algorithm>
+#include <atomic>
 #include <boost/property_tree/ptree_fwd.hpp>
 #include <chrono>
 #include <cstdint>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
@@ -9,14 +11,17 @@
 #include <ostream>
 #include <string>
 #include <string_view>
+#include <sys/socket.h>
 #include <thread>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/detail/file_parser_error.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <map>
+#include <unistd.h>
 #include <vector>
 #include "file_util.h"
+#include "tcp_helper.h"
 
 namespace pt = boost :: property_tree;
 
@@ -113,86 +118,123 @@ private:
     pt::ptree pt_;
 };
 
+class Client{
+public:
+    Client(std::shared_ptr<std::vector<int>>client_socket_fd) : client_socket_fd_{client_socket_fd}{};
+    void Run(){
+        while(!stopped_.load()){
+            if(client_socket_fd_->empty()){
+                continue;
+            }
+            int client_fd = client_socket_fd_->front();
+            client_socket_fd_->erase(client_socket_fd_->begin());
+            if(send(client_fd, buff, 24, 0) < 0){
+                perror("Sending Error");
+            }
+            close(client_fd);
+        }
+    }
+    void Stop(){
+        stopped_= true;
+    }
+private:
+char buff[24]{"Hello from server !\n"};
+std::shared_ptr<std::vector<int>>client_socket_fd_;
+std::atomic_bool stopped_{false};
+};
+
 int main()
 {
-    std::string file_ = "/home/mert/Projects/CmakeRepo/App/test.txt";
-    std::string direct = "/home/mert/Projects/CmakeRepo/App/test/";
-    std::string new_direct = "/home/mert/Projects/CmakeRepo/App/include/test/";
+    std::shared_ptr<std::vector<int>>client_socket_fd{new std::vector<int>{}};
+    Client client{client_socket_fd};
+    TcpHelper tcp_helper{client_socket_fd};
+    if(!tcp_helper.CreateServer()){
+        perror("ERROR:");
+        return -1;
+    }
+    std::thread t = std::thread{&Client::Run,&client};
 
-    std::string new_file_ = "/home/mert/Projects/CmakeRepo/App/test/test.txt";
-
-    // std::string file_name {"/home/mert/Projects/CmakeRepo/App/log_level.xml"};
-    // XMLParser parser{file_name};
-    // parser.ReadAll();
-    // ConfigFileParser json_parser;
-    // if(!json_parser.Initialize("/home/mert/Projects/CmakeRepo/App/channel.json")){
-    //     return -1;
+    std::this_thread::sleep_for(std::chrono::seconds(60));
+    client.Stop();
+    t.join();
+    // std::string file_ = "/home/mert/Projects/CmakeRepo/App/test.txt";
+    // std::string direct = "/home/mert/Projects/CmakeRepo/App/demo/";
+    // std::string new_direct = "/home/mert/Projects/CmakeRepo/App/include/demo/";
+    // std::string new_file_ = "/home/mert/Projects/CmakeRepo/App/test/test.txt";
+    // // std::string file_name {"/home/mert/Projects/CmakeRepo/App/log_level.xml"};
+    // // XMLParser parser{file_name};
+    // // parser.ReadAll();
+    // // ConfigFileParser json_parser;
+    // // if(!json_parser.Initialize("/home/mert/Projects/CmakeRepo/App/channel.json")){
+    // //     return -1;
+    // // }
+    // // json_parser.Parse();
+    // FileUtil file_util;
+    // if(file_util.CreateFile(file_)){
+    //     std::cout << "File creation succeed!\n";
+    //     file_util.PrintFileAllInformation(file_);
+    //     sync();
     // }
-    // json_parser.Parse();
-    FileUtil file_util;
-    if(file_util.CreateFile(file_)){
-        std::cout << "File creation succeed!\n";
-    }
-    else{
-        std::cout << "File creation failed!\n";
-    }
+    // else{
+    //     std::cout << "File creation failed!\n";
+    // }
 
-    if(file_util.FileExists(file_)){
-        std::cout << "File exists!\n";
-    }
-    else{
-        std::cout << "File is exists!\n";
-    }
+    // if(file_util.FileExists(file_)){
+    //     std::cout << "File exists!\n";
+    // }
+    // else{
+    //     std::cout << "File is exists!\n";
+    // }
 
 
-    if(file_util.CreateDirectory(direct)){
-        std::cout << "Directory creation succeed!\n";
-    }
-    else{
-        std::cout << "Directory creation failed!\n";
-    }
+    // if(file_util.CreateDirectory(direct)){
+    //     std::cout << "Directory creation succeed!\n";
+    // }
+    // else{
+    //     std::cout << "Directory creation failed!\n";
+    // }
 
-    if(file_util.MoveFile(new_file_,file_)){
-        std::cout << "Moving file succeed!\n";
-    }
-    else{
-        std::cout << "Moving file failed!\n";
-    }
+    // if(file_util.MoveFile(new_file_,file_)){
+    //     std::cout << "Moving file succeed!\n";
+    // }
+    // else{
+    //     std::cout << "Moving file failed!\n";
+    // }
 
-    if(file_util.MoveFolder(new_direct, direct)){
-        std::cout << "Moving folder succeed!\n";
-    }
-    else{
-        std::cout << "Moving folder failed!\n";
-    }
+    // if(file_util.MoveFolder(new_direct, direct)){
+    //     std::cout << "Moving folder succeed!\n";
+    // }
+    // else{
+    //     std::cout << "Moving folder failed!\n";
+    // }
 
-    if(file_util.DeleteFile(new_direct+"test.txt")){
-        std::cout << "File deleted succeed!\n";
-    }
-    else{
-        std::cout << "File deleted succeed!\n";
-    }
+    // if(file_util.DeleteFile(new_direct+"test.txt")){
+    //     std::cout << "File deleted succeed!\n";
+    // }
+    // else{
+    //     std::cout << "File deleted succeed!\n";
+    // }
 
-    if(file_util.DeleteDirectory(new_direct)){
-        std::cout << "DeleteDirectory succeed!\n";
-    }
-    else{
-        std::cout << "DeleteDirectory failed!\n";
-    }
+    // if(file_util.DeleteDirectory(new_direct)){
+    //     std::cout << "DeleteDirectory succeed!\n";
+    // }
+    // else{
+    //     std::cout << "DeleteDirectory failed!\n";
+    // }
 
-    if(file_util.CreateDirectory(direct)){
-        std::cout << "Directory creation succeed!\n";
-    }
-    else{
-        std::cout << "Directory creation failed!\n";
-    }
+    // if(file_util.CreateDirectory(direct)){
+    //     std::cout << "Directory creation succeed!\n";
+    // }
+    // else{
+    //     std::cout << "Directory creation failed!\n";
+    // }
 
-    if(file_util.DeleteDirectory(direct)){
-        std::cout << "DeleteDirectory succeed!\n";
-    }
-    else{
-        std::cout << "DeleteDirectory failed!\n";
-    }
+    // if(file_util.DeleteDirectory(direct)){
+    //     std::cout << "DeleteDirectory succeed!\n";
+    // }
+    // else{
+    //     std::cout << "DeleteDirectory failed!\n";
+    // }
 
     return 0;
     
